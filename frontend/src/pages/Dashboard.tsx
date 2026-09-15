@@ -44,7 +44,10 @@ export default function Dashboard() {
 
   const totalDebt = accounts.reduce((sum, a) => sum + a.balance, 0)
   const totalMinimums = accounts.reduce((sum, a) => sum + monthlyEquivalent(a), 0)
-  const dueSoon = accounts
+  const nonSubscriptions = accounts.filter((a) => a.category !== 'subscription')
+  const subscriptions = accounts.filter((a) => a.category === 'subscription')
+  const subscriptionsTotal = subscriptions.reduce((sum, a) => sum + monthlyEquivalent(a), 0)
+  const dueSoon = nonSubscriptions
     .map((a) => ({ account: a, due: nextDueDate(a.due_day) }))
     .filter(({ due }) => daysUntil(due) <= 7)
     .sort((a, b) => a.due.getTime() - b.due.getTime())
@@ -71,6 +74,10 @@ export default function Dashboard() {
           <div className="stat-label">Active Accounts</div>
           <div className="stat-value">{accounts.length}</div>
         </div>
+        <Link to="/subscriptions" className="card" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className="stat-label">Subscriptions ({subscriptions.length})</div>
+          <div className="stat-value">{formatMoney(subscriptionsTotal)}/mo</div>
+        </Link>
       </div>
 
       <div className="section">
@@ -114,6 +121,17 @@ export default function Dashboard() {
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={2} style={{ fontWeight: 600, borderTop: '2px solid var(--border)' }}>
+                    Total
+                  </td>
+                  <td style={{ fontWeight: 600, borderTop: '2px solid var(--border)' }}>
+                    {formatMoney(dueSoon.reduce((sum, { account }) => sum + account.minimum_payment, 0))}
+                  </td>
+                  <td style={{ borderTop: '2px solid var(--border)' }}></td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         )}
@@ -145,7 +163,7 @@ export default function Dashboard() {
       <div className="section">
         <h3>Accounts</h3>
         <div className="card-grid">
-          {accounts.map((a) => (
+          {nonSubscriptions.map((a) => (
             <Link key={a.id} to={`/accounts/${a.id}`} className="card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="row" style={{ justifyContent: 'space-between' }}>
                 <strong>{a.name}</strong>

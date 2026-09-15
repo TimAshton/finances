@@ -1,6 +1,7 @@
 export type Category =
   | 'credit_card'
   | 'mortgage'
+  | 'rental_property'
   | 'auto'
   | 'student_loan'
   | 'consolidation_loan'

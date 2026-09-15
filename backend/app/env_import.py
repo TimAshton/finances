@@ -10,6 +10,7 @@ from dataclasses import dataclass
 CC_KEY_RE = re.compile(r"^CC(\d+)_NAME$")
 CONSOLIDATION_KEY_RE = re.compile(r"^CONSOLIDATION(\d+)_NAME$")
 RENTAL_KEY_RE = re.compile(r"^RENTAL(\d+)_NAME$")
+SUBSCRIPTION_KEY_RE = re.compile(r"^SUBSCRIPTION(\d+)_NAME$")
 
 
 def _float_or_none(raw: str | None) -> float | None:
@@ -115,7 +116,7 @@ def _parse_rental_property(index: int) -> ParsedAccount | None:
     return ParsedAccount(
         source_key=prefix,
         name=os.getenv(f"{prefix}_NAME") or f"Rental Property {index}",
-        category="mortgage",
+        category="rental_property",
         lender=os.getenv(f"{prefix}_NAME") or "",
         balance=balance,
         interest_rate=_float_or_none(os.getenv(f"{prefix}_RATE")) or 0.0,
@@ -124,8 +125,6 @@ def _parse_rental_property(index: int) -> ParsedAccount | None:
         billing_frequency="monthly",
         due_day=due_day,
         url=os.getenv(f"{prefix}_URL") or "",
-        purchase_price=_float_or_none(os.getenv(f"{prefix}_PURCHASE_PRICE")),
-        market_value=_float_or_none(os.getenv(f"{prefix}_MARKET_VALUE")),
     )
 
 
@@ -151,6 +150,28 @@ def _parse_recurring_bill(prefix: str, source_key: str, category: str, default_n
         credit_limit=None,
         minimum_payment=amount,
         billing_frequency=frequency,
+        due_day=due_day,
+        url=os.getenv(f"{prefix}_URL") or "",
+    )
+
+
+def _parse_subscription(index: int) -> ParsedAccount | None:
+    prefix = f"SUBSCRIPTION{index}"
+    amount = _float_or_none(os.getenv(f"{prefix}_AMOUNT"))
+    due_day = _int_or_none(os.getenv(f"{prefix}_DUE_DAY"))
+    if amount is None or due_day is None:
+        return None
+    name = os.getenv(f"{prefix}_NAME") or f"Subscription {index}"
+    return ParsedAccount(
+        source_key=prefix,
+        name=name,
+        category="subscription",
+        lender=name,
+        balance=0.0,
+        interest_rate=0.0,
+        credit_limit=None,
+        minimum_payment=amount,
+        billing_frequency=os.getenv(f"{prefix}_FREQUENCY") or "monthly",
         due_day=due_day,
         url=os.getenv(f"{prefix}_URL") or "",
     )
@@ -203,12 +224,20 @@ def parse_env_accounts() -> list[ParsedAccount]:
     if water:
         accounts.append(water)
 
-    internet = _parse_recurring_bill("INTERNET", "INTERNET", "subscription", "Internet")
+    internet = _parse_recurring_bill("INTERNET", "INTERNET", "utility", "Internet")
     if internet:
         accounts.append(internet)
 
     insurance = _parse_recurring_bill("INSURANCE", "INSURANCE", "insurance", "Car Insurance")
     if insurance:
         accounts.append(insurance)
+
+    subscription_indices = sorted(
+        int(m.group(1)) for key in os.environ if (m := SUBSCRIPTION_KEY_RE.match(key))
+    )
+    for index in subscription_indices:
+        subscription = _parse_subscription(index)
+        if subscription:
+            accounts.append(subscription)
 
     return accounts

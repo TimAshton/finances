@@ -5,6 +5,7 @@ import { FREQUENCY_LABELS } from '../utils/format'
 const CATEGORIES: { value: Category; label: string }[] = [
   { value: 'credit_card', label: 'Credit Card' },
   { value: 'mortgage', label: 'Mortgage' },
+  { value: 'rental_property', label: 'Rental Property' },
   { value: 'auto', label: 'Auto Loan' },
   { value: 'student_loan', label: 'Student Loan' },
   { value: 'consolidation_loan', label: 'Consolidation Loan' },

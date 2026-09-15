@@ -14,7 +14,7 @@ export default function Calendar() {
   const [cursor, setCursor] = useState(startOfMonth(new Date()))
 
   useEffect(() => {
-    api.getAccounts().then(setAccounts)
+    api.getAccounts().then((accs) => setAccounts(accs.filter((a) => a.category !== 'subscription')))
   }, [])
 
   const today = new Date()

@@ -88,7 +88,7 @@ Single Docker container — FastAPI serves both the API and the pre-built React 
 {
   "id": "uuid",
   "name": "Chase Sapphire",
-  "category": "credit_card | mortgage | auto | student_loan | consolidation_loan | insurance | utility | subscription | other",
+  "category": "credit_card | mortgage | rental_property | auto | student_loan | consolidation_loan | insurance | utility | subscription | other",
   "lender": "string",
   "balance": "decimal",
   "interest_rate": "decimal (APR %)",

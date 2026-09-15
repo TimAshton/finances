@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class Category(str, Enum):
     credit_card = "credit_card"
     mortgage = "mortgage"
+    rental_property = "rental_property"
     auto = "auto"
     student_loan = "student_loan"
     consolidation_loan = "consolidation_loan"

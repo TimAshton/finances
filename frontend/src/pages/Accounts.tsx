@@ -20,7 +20,7 @@ export default function Accounts() {
     setLoading(true)
     api
       .getAccounts()
-      .then(setAccounts)
+      .then((accs) => setAccounts(accs.filter((a) => a.category !== 'subscription')))
       .finally(() => setLoading(false))
   }
 

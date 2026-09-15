@@ -46,7 +46,9 @@ export default function AccountDetail() {
     api.getAccount(id).then((a) => {
       setAccount(a)
       setCustomPayment(a.minimum_payment)
-      api.getPayoffScenario(id, a.minimum_payment).then(setMinScenario)
+      if (a.category !== 'rental_property') {
+        api.getPayoffScenario(id, a.minimum_payment).then(setMinScenario)
+      }
     })
     api.getPayments(id).then(setPayments)
   }
@@ -140,6 +142,7 @@ export default function AccountDetail() {
       {account.lender && <p className="text-muted">Lender: {account.lender}</p>}
       {account.notes && <p className="text-muted">Notes: {account.notes}</p>}
 
+      {account.category !== 'rental_property' && (
       <div className="section">
         <h3>Payoff Calculator</h3>
         <div className="card-grid">
@@ -197,6 +200,7 @@ export default function AccountDetail() {
           </div>
         </div>
       </div>
+      )}
 
       <div className="section">
         <h3>Log a Payment</h3>

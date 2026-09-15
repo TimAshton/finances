@@ -7,10 +7,12 @@ import Dashboard from './pages/Dashboard'
 import Payoff from './pages/Payoff'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+import Subscriptions from './pages/Subscriptions'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/accounts', label: 'Accounts' },
+  { to: '/subscriptions', label: 'Subscriptions' },
   { to: '/payoff', label: 'Payoff Planner' },
   { to: '/calendar', label: 'Calendar' },
   { to: '/reports', label: 'Reports' },
@@ -33,6 +35,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/accounts" element={<Accounts />} />
           <Route path="/accounts/:id" element={<AccountDetail />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/payoff" element={<Payoff />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/reports" element={<Reports />} />

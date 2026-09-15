@@ -26,6 +26,7 @@ export function formatMonthYear(iso: string): string {
 export const CATEGORY_LABELS: Record<Category, string> = {
   credit_card: 'Credit Card',
   mortgage: 'Mortgage',
+  rental_property: 'Rental Property',
   auto: 'Auto Loan',
   student_loan: 'Student Loan',
   consolidation_loan: 'Consolidation Loan',
@@ -38,6 +39,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 export const CATEGORY_COLORS: Record<Category, string> = {
   credit_card: '#e0663e',
   mortgage: '#3e6fe0',
+  rental_property: '#2f8fb0',
   auto: '#8a5fd4',
   student_loan: '#1f9ec9',
   consolidation_loan: '#c2489a',
