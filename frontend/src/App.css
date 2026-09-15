@@ -1,0 +1,45 @@
+.app-shell {
+  display: flex;
+  min-height: 100%;
+}
+
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1.25rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar h1 {
+  font-size: 1.05rem;
+  padding: 0 0.5rem 1rem;
+}
+
+.sidebar a {
+  display: block;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.sidebar a:hover {
+  background: var(--bg);
+}
+
+.sidebar a.active {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1.75rem 2rem;
+  max-width: 1200px;
+}

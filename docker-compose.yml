@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db:/app/db        # persistent local database
+      - ./.env:/app/.env    # sensitive config, never in image
+    restart: unless-stopped
