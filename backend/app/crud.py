@@ -1,5 +1,6 @@
 from datetime import date
 
+from dotenv import load_dotenv
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -131,6 +132,9 @@ def create_snapshot(db: Session) -> models.Snapshot:
 
 
 def import_accounts_from_env(db: Session) -> list[models.Account]:
+    # Re-read .env so edits made while the server is running are picked up
+    # without a restart (config.py only loads it once at startup).
+    load_dotenv(override=True)
     parsed = parse_env_accounts()
     result = []
     for entry in parsed:
