@@ -70,6 +70,37 @@ def create_payment(
     return payment
 
 
+def list_checklist_entries(db: Session, month: str) -> list[models.ChecklistEntry]:
+    stmt = select(models.ChecklistEntry).where(models.ChecklistEntry.month == month)
+    return list(db.scalars(stmt))
+
+
+def get_checklist_entry(db: Session, account_id: str, month: str) -> models.ChecklistEntry | None:
+    return db.scalar(
+        select(models.ChecklistEntry).where(
+            models.ChecklistEntry.account_id == account_id,
+            models.ChecklistEntry.month == month,
+        )
+    )
+
+
+def mark_checklist_paid(db: Session, account_id: str, month: str) -> models.ChecklistEntry:
+    entry = get_checklist_entry(db, account_id, month)
+    if entry is None:
+        entry = models.ChecklistEntry(account_id=account_id, month=month, paid_on=date.today())
+        db.add(entry)
+        db.commit()
+        db.refresh(entry)
+    return entry
+
+
+def unmark_checklist_paid(db: Session, account_id: str, month: str) -> None:
+    entry = get_checklist_entry(db, account_id, month)
+    if entry is not None:
+        db.delete(entry)
+        db.commit()
+
+
 def list_snapshots(db: Session) -> list[models.Snapshot]:
     stmt = select(models.Snapshot).order_by(models.Snapshot.snapshot_date)
     return list(db.scalars(stmt))
@@ -148,6 +179,7 @@ def import_accounts_from_env(db: Session) -> list[models.Account]:
 
 def reset_all_data(db: Session) -> None:
     db.query(models.Payment).delete()
+    db.query(models.ChecklistEntry).delete()
     db.query(models.Snapshot).delete()
     db.query(models.Account).delete()
     db.commit()

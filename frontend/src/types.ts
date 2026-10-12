@@ -57,6 +57,12 @@ export interface Payment {
   notes: string
 }
 
+export interface ChecklistEntry {
+  account_id: string
+  month: string
+  paid_on: string
+}
+
 export interface Snapshot {
   id: string
   snapshot_date: string

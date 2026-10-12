@@ -95,6 +95,14 @@ class PaymentOut(BaseModel):
     notes: str
 
 
+class ChecklistEntryOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    account_id: str
+    month: str
+    paid_on: date
+
+
 class SnapshotOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

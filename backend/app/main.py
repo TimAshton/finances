@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import STATIC_DIR
 from app.database import Base, engine, run_migrations
-from app.routers import accounts, payoff, settings, snapshots
+from app.routers import accounts, checklist, payoff, settings, snapshots
 
 Base.metadata.create_all(bind=engine)
 run_migrations()
@@ -25,6 +25,7 @@ app.include_router(accounts.router)
 app.include_router(payoff.router)
 app.include_router(snapshots.router)
 app.include_router(settings.router)
+app.include_router(checklist.router)
 
 
 @app.get("/api/health")

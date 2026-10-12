@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -51,6 +51,9 @@ class Account(Base):
     payments: Mapped[list["Payment"]] = relationship(
         back_populates="account", cascade="all, delete-orphan"
     )
+    checklist_entries: Mapped[list["ChecklistEntry"]] = relationship(
+        back_populates="account", cascade="all, delete-orphan"
+    )
 
 
 class Payment(Base):
@@ -64,6 +67,25 @@ class Payment(Base):
     notes: Mapped[str] = mapped_column(String, default="")
 
     account: Mapped["Account"] = relationship(back_populates="payments")
+
+
+class ChecklistEntry(Base):
+    """Marks an account's bill as paid for one calendar month on the Monthly
+    Checklist. Row present = paid; unchecking deletes the row. Deliberately
+    separate from Payment: ticking a box is a quick "did I pay it?" record and
+    doesn't touch Account.balance.
+    """
+
+    __tablename__ = "checklist_entries"
+    __table_args__ = (UniqueConstraint("account_id", "month"),)
+
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
+    account_id: Mapped[str] = mapped_column(ForeignKey("accounts.id"), nullable=False)
+    # "YYYY-MM"
+    month: Mapped[str] = mapped_column(String, nullable=False)
+    paid_on: Mapped[date] = mapped_column(Date, nullable=False, default=date.today)
+
+    account: Mapped["Account"] = relationship(back_populates="checklist_entries")
 
 
 class Snapshot(Base):

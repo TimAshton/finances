@@ -1,6 +1,7 @@
 import type {
   Account,
   AccountInput,
+  ChecklistEntry,
   Payment,
   PayoffPlanResult,
   PayoffScenario,
@@ -49,6 +50,12 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ extra_monthly_budget: extraMonthlyBudget, strategy }),
     }),
+
+  getChecklist: (month: string) => request<ChecklistEntry[]>(`/checklist/${month}`),
+  markChecklistPaid: (month: string, accountId: string) =>
+    request<ChecklistEntry>(`/checklist/${month}/${accountId}`, { method: 'PUT' }),
+  unmarkChecklistPaid: (month: string, accountId: string) =>
+    request<void>(`/checklist/${month}/${accountId}`, { method: 'DELETE' }),
 
   getSnapshots: () => request<Snapshot[]>('/snapshots'),
   createSnapshot: () => request<Snapshot>('/snapshots', { method: 'POST' }),
