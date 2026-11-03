@@ -129,10 +129,13 @@ def _parse_rental_property(index: int) -> ParsedAccount | None:
 
 
 def _parse_recurring_bill(prefix: str, source_key: str, category: str, default_name: str) -> ParsedAccount | None:
-    amount = _float_or_none(os.getenv(f"{prefix}_AMOUNT"))
     due_day = _int_or_none(os.getenv(f"{prefix}_DUE_DAY"))
-    if amount is None or due_day is None:
+    if due_day is None:
         return None
+    # AMOUNT may be left blank for a bill that's different every time (e.g.
+    # trash): it imports at $0 and the actual amount is logged as a Payment
+    # each cycle. Set an estimate instead to have it count in planning totals.
+    amount = _float_or_none(os.getenv(f"{prefix}_AMOUNT")) or 0.0
     provider = os.getenv(f"{prefix}_PROVIDER") or ""
     # Optional — most recurring bills are monthly; a bill like water that's
     # billed every other month (and varies in amount) sets e.g. WATER_FREQUENCY=
@@ -223,6 +226,10 @@ def parse_env_accounts() -> list[ParsedAccount]:
     water = _parse_recurring_bill("WATER", "WATER", "utility", "Water")
     if water:
         accounts.append(water)
+
+    trash = _parse_recurring_bill("TRASH", "TRASH", "utility", "Trash")
+    if trash:
+        accounts.append(trash)
 
     internet = _parse_recurring_bill("INTERNET", "INTERNET", "utility", "Internet")
     if internet:
